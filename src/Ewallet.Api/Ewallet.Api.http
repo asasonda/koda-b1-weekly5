@@ -1,0 +1,19 @@
+@base = http://localhost:5256
+
+### get
+GET {{base}}/api/users
+Accept: application/json
+
+### post
+POST {{base}}/api/users
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name" : "Budi",
+    "email" : "budi@gmail.com",
+    "password" : "budi1234",
+    "phone" : "081200040987",
+    "walletNumber": "W2",
+    "pin" : "906754"
+}
