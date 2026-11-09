@@ -63,3 +63,4 @@ D:\koda\C#\koda-b1-weekly5\src\Ewallet.Api\bin\Debug\net10.0\runtimes\win\lib\ne
 D:\koda\C#\koda-b1-weekly5\src\Ewallet.Api\bin\Debug\net10.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
 D:\koda\C#\koda-b1-weekly5\src\Ewallet.Api\bin\Debug\net10.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
 D:\koda\C#\koda-b1-weekly5\src\Ewallet.Api\bin\Debug\net10.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+D:\koda\C#\koda-b1-weekly5\src\Ewallet.Api\obj\Debug\net10.0\Ewallet.Api.sourcelink.json

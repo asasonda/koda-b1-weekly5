@@ -12,6 +12,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<IUserRepository, SqlUserRepository>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 
+builder.Services.AddScoped<IWalletRepository, SqlWalletRepository>();
+builder.Services.AddScoped<IWalletServices, WalletServices>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -15,14 +15,11 @@ public sealed class UserServices : IUserServices
 
     public async Task<UserResponse?> CreateAsync(UserRequest request, CancellationToken cancellationToken)
     {
-        var users = new Users(request.Name, request.Email, request.Password, request.Phone);
-        var created = await _repository.AddUserWithWalletAsync(users, request.WalletNumber, request.Pin, cancellationToken);
-        if(created is null)
-        {
-            return null;
-        }
+        var users = new Users(request.Name, request.Email, request.Phone);
+        var wallets = new Wallets(request.WalletNumber);
+        var created = await _repository.AddUserWithWalletAsync(users, wallets, cancellationToken);
 
-        return new UserResponse(created.Value, users.Name, users.Email, users.Phone);
+        return created ? UserResponse.FromModel(users) : null;
     }
 
     public async Task<IReadOnlyList<UserResponse>> GetAllAsync(CancellationToken cancellationToken)
@@ -33,7 +30,7 @@ public sealed class UserServices : IUserServices
 
     public async Task<UserResponse?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        if(id < 0)
+        if (id < 0)
         {
             return null;
         }
@@ -43,7 +40,7 @@ public sealed class UserServices : IUserServices
 
     public async Task<UserResponse?> UpdateAsync(int id, UpdateUserRequest request, CancellationToken cancellationToken)
     {
-        var users = new Users(id, request.Name, request.Email, request.Password, request.Phone);
+        var users = new Users(id, request.Name, request.Email, request.Phone);
         var updated = await _repository.UpdateUserAsync(users, cancellationToken);
         return updated ? UserResponse.FromModel(users) : null;
     }

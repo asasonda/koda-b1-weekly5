@@ -3,12 +3,11 @@ namespace Ewallet.Api.Models;
 public sealed class Users
 {
     public int Id {get;}
-    public string Name {get;}
-    public string Email {get;}
-    public string Password {get;}
-    public string Phone {get;}
+    public string Name {get; private set;}
+    public string Email {get; private set;}
+    public string Phone {get; private set;}
 
-    public Users(int id, string name, string email, string password, string phone)
+    public Users(int id, string name, string email, string phone)
     {
         if(id < 0)
         {
@@ -22,10 +21,7 @@ public sealed class Users
         {
             throw new ArgumentException("Email is required", nameof(email));
         }
-        if (string.IsNullOrWhiteSpace(password))
-        {
-            throw new ArgumentException("Password is required", nameof(password));
-        }
+
         if (string.IsNullOrWhiteSpace(phone))
         {
             throw new ArgumentException("Phone is required", nameof(phone));
@@ -34,32 +30,23 @@ public sealed class Users
         Id = id;
         Name = name;
         Email = email;
-        Password = password;
         Phone = phone;
     }
 
-    public Users(string name, string email, string password, string phone)
+
+    public Users(string name, string email, string phone)
     {
         if (string.IsNullOrWhiteSpace(name))
-        {
             throw new ArgumentException("Name is required", nameof(name));
-        }
+
         if (string.IsNullOrWhiteSpace(email))
-        {
             throw new ArgumentException("Email is required", nameof(email));
-        }
-        if (string.IsNullOrWhiteSpace(password))
-        {
-            throw new ArgumentException("Password is required", nameof(password));
-        }
+
         if (string.IsNullOrWhiteSpace(phone))
-        {
             throw new ArgumentException("Phone is required", nameof(phone));
-        }
 
         Name = name;
         Email = email;
-        Password = password;
         Phone = phone;
     }
 }

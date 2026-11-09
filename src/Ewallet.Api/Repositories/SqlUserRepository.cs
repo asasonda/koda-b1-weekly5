@@ -13,57 +13,59 @@ public sealed class SqlUserRepository : IUserRepository
         _connection = configuration.GetConnectionString("Ewallet") ?? throw new InvalidOperationException("Connection hilang");
     }
 
-    public async Task<int?> AddUserWithWalletAsync(Users users, string walletNumber, string pin, CancellationToken cancellationToken)
+    public async Task<bool> AddUserWithWalletAsync(Users users, Wallets wallets, CancellationToken cancellationToken)
     {
-        const string sqlUser = """
-            INSERT INTO dbo.Users(Name, Email, Password, Phone)
-            OUTPUT INSERTED.id
-            VALUES(@name, @email, @password, @phone)
-        """;
+        const string sql = """
+            INSERT INTO dbo.Users(Name, Email, Phone) 
+            VALUES (@name, @email, @phone);
 
-        const string sqlWallet = """
-            INSERT INTO dbo.Wallets(UsersId, WalletNumber, Pin) VALUES
-            (@usersId, @walletNumber, @pin)
+            DECLARE @newUserId INT = SCOPE_IDENTITY();
+
+            INSERT INTO dbo.Wallets(UsersId, WalletNumber) 
+            VALUES (@newUserId, @walletNumber);
         """;
 
         await using var connection = new SqlConnection(_connection);
         await connection.OpenAsync(cancellationToken);
 
-        await using var transaction = (SqlTransaction)await connection.BeginTransactionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        await using var command = new SqlCommand(sql, connection);
+        command.Transaction = (SqlTransaction)transaction;
+
+        command.Parameters.Add("@name", SqlDbType.NVarChar, 50).Value = users.Name;
+        command.Parameters.Add("@email", SqlDbType.NVarChar, 100).Value = users.Email;
+        command.Parameters.Add("@phone", SqlDbType.NVarChar, 20).Value = users.Phone;
+        command.Parameters.Add("@walletNumber", SqlDbType.NVarChar, 50).Value = wallets.WalletNumber;
 
         try
         {
-            await using var userCommand = new SqlCommand(sqlUser, connection, transaction);
-            AddUserParameter(userCommand, users);
-
-            var userId = Convert.ToInt32(await userCommand.ExecuteScalarAsync(cancellationToken));
-
-            await using var walletCommand = new SqlCommand(sqlWallet, connection, transaction);
-            AddWalletParameter(walletCommand, userId, walletNumber, pin);
-
-            var affectedRows = await walletCommand.ExecuteNonQueryAsync(cancellationToken);
-
-            if (affectedRows != 1)
+            var affectedRows = await command.ExecuteNonQueryAsync(cancellationToken);
+            if (affectedRows == 2)
             {
-                await transaction.RollbackAsync(cancellationToken);
-                return null;
+                await transaction.CommitAsync(cancellationToken);
+                return true;
             }
-            await transaction.CommitAsync(cancellationToken);
-
-            return userId;
-
+            await transaction.RollbackAsync(cancellationToken);
+            return false;
         }
-        catch (SqlException e)when (e.Number is 2601 or 2627)
+        catch (SqlException e) when (e.Number is 2601 or 2627)
         {
-            await transaction.RollbackAsync(CancellationToken.None);
-            return null;
+            await transaction.RollbackAsync(cancellationToken);
+            return false;
+        }
+        catch (SqlException e)
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            Console.WriteLine($"SQL Error tidak terduga: {e.Number} - {e.Message}");
+            return false;
         }
     }
 
     public async Task<IReadOnlyList<Users>> GetAllAsync(CancellationToken cancellationToken)
     {
         const string sql = """
-            SELECT Name, Email, Password, Phone FROM dbo.Users join dbo.Wallets w on 
+            SELECT Id, Name, Email, Phone FROM dbo.Users 
         """;
 
         var users = new List<Users>();
@@ -83,7 +85,7 @@ public sealed class SqlUserRepository : IUserRepository
     public async Task<Users?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         const string sql = """
-            SELECT Name, Email, Password, Phone FROM dbo.Users WHERE id =@id
+            SELECT Id, Name, Email, Phone FROM dbo.Users WHERE id =@id
         """;
 
         await using var connection = new SqlConnection(_connection);
@@ -106,7 +108,6 @@ public sealed class SqlUserRepository : IUserRepository
             UPDATE dbo.Users SET
                 Name = @name,
                 Email = @email,
-                Password = @password,
                 Phone = @phone
             WHERE Id = @id
         """;
@@ -125,15 +126,7 @@ public sealed class SqlUserRepository : IUserRepository
         AddUserId(command, users.Id);
         command.Parameters.Add("@name", SqlDbType.NVarChar, 50).Value = users.Name;
         command.Parameters.Add("@email", SqlDbType.NVarChar, 100).Value = users.Email;
-        command.Parameters.Add("@password", SqlDbType.NVarChar, 255).Value = users.Password;
         command.Parameters.Add("@phone", SqlDbType.NVarChar, 20).Value = users.Phone;
-    }
-
-    private static void AddWalletParameter(SqlCommand command, int userId, string walletNumber, string pin)
-    {
-        command.Parameters.Add("@usersId", SqlDbType.Int).Value = userId;
-        command.Parameters.Add("@walletNumber", SqlDbType.NVarChar, 50).Value = walletNumber;
-        command.Parameters.Add("@pin", SqlDbType.NVarChar, 8).Value = pin;
     }
 
     private static void AddUserId(SqlCommand command, int id)
@@ -144,7 +137,7 @@ public sealed class SqlUserRepository : IUserRepository
     private static Users ReadUsers(SqlDataReader reader)
     {
         return new Users(
-            reader.GetString(0),
+            reader.GetInt32(0),
             reader.GetString(1),
             reader.GetString(2),
             reader.GetString(3)

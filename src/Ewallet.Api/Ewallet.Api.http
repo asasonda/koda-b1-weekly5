@@ -12,8 +12,10 @@ Content-Type: application/json
 {
     "name" : "Budi",
     "email" : "budi@gmail.com",
-    "password" : "budi1234",
     "phone" : "081200040987",
-    "walletNumber": "W2",
-    "pin" : "906754"
+    "walletNumber": "WAL001"
 }
+
+### Get Wallet by userId
+GET {{base}}/api/wallets/1
+Accept: application/json
