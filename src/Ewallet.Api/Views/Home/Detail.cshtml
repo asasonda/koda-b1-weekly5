@@ -1,19 +1,15 @@
 @model Ewallet.Api.ViewModels.DetailViewModel
 
-@* var pendapatan = Model.Transactions
-        .Where(p => p.ReceiverWalletId == Model.Wallet.Id)
-        .Sum(p => p.Amount);
-
-    var pengeluaran = Model.Transactions
-        .Where(p => p.SenderWalletId == Model.Wallet.Id)
-        .Sum(p => p.Amount); *@
-
 @{
     ViewData["Title"] = "Detail";
     
 }
 <div class="mx-auto max-w-7xl px-4 py-8 md:px-10">
-    <div class="rounded-lg border border-gray-200 bg-white p-6">
+    <a asp-controller="Home"
+        asp-action="Index"
+        class="text-sm font-semibold text-gray-500 hover:text-black">&larr; Kembali ke Home
+    </a>
+    <div class="rounded-lg border border-gray-200 bg-white p-6 mt-3">
         <div class="flex flex-col justify-between gap-5 md:flex-row md:items-start">
             <div>
                 <p class="text-sm text-gray-500">Informasi Account</p>
@@ -37,18 +33,25 @@
         </div>
 
         <div class="mt-6 flex flex-wrap gap-3 border-t border-gray-100 pt-5">
-                <a asp-controller="Home"
+            <a asp-controller="Home"
                 asp-action="Edit"
                 asp-route-id="@Model.User.Id"
                 class="rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white">
                     Update Data
-                </a>
+            </a>
 
             <a asp-controller="WalletPage"
                 asp-action="Detail"
                 asp-route-id="@Model.User.Id"
                 class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700">
                     Detail Wallet
+            </a>
+
+            <a asp-controller="Home"
+                asp-action="History"
+                asp-route-id="@Model.User.Id"
+                class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700">
+                    Riwayat Transaksi
             </a>
         </div>
     </div>

@@ -36,12 +36,12 @@
     </div>
 
     <main>
-        @if (TempData["Success"] is string message)
+        @* @if (TempData["Success"] is string message)
         {
             <div class="mb-6 rounded-lg border border-green-200 bg-green-100 px-4 py-3 text-green-700">
                 @message
             </div>
-        }
+        } *@
         @RenderBody()
 
     </main>

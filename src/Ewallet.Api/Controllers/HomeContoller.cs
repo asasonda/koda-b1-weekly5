@@ -146,4 +146,33 @@ public sealed class HomeController : Controller
             return View(request);
         }
     }
+
+    [HttpGet("users/{id:int}/transactions")]
+    public async Task<IActionResult> History(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        var user = await _userServices.GetByIdAsync(id, cancellationToken);
+
+        if (user is null)
+            return NotFound();
+
+        var wallet = await _walletServices.GetByIdUsersAsync(
+            id, cancellationToken);
+
+        if (wallet is null)
+            return NotFound("Wallet tidak ditemukan.");
+
+        var transactions = await _userServices.GetTransactionsByUsersIdAsync(
+            id, cancellationToken);
+
+        var model = new DetailViewModel
+        {
+            User = user,
+            Wallet = wallet,
+            Transactions = transactions
+        };
+
+        return View(model);
+    }
 }
