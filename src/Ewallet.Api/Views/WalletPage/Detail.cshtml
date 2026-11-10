@@ -1,0 +1,83 @@
+ @model Ewallet.Api.DTOs.WalletResponse
+
+
+@{
+    ViewData["Title"] = "Wallet Detail";
+}
+
+<div class="mx-auto max-w-7xl px-4 py-8 md:px-10">
+
+    <div class="mb-8">
+        <a asp-controller="Home"
+           asp-action="Detail"
+           asp-route-id="@Model.UsersId"
+           class="text-sm font-semibold text-gray-500 hover:text-black">
+            &larr; Kembali ke Account
+        </a>
+
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="mt-5 text-2xl font-bold text-gray-900">
+                    Detail Wallet
+                </h1>
+
+                <p class="mt-1 text-sm text-gray-500">
+                    Informasi lengkap wallet pengguna.
+                </p>
+            </div>
+            <div class="mt-8 flex flex-wrap gap-3 border-t border-gray-100">
+                <a asp-controller="WalletPage"
+                asp-action="TopUp"
+                asp-route-id="@Model.UsersId"
+                class="rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white">
+                    + Top Up
+                </a>
+
+                <a asp-controller="WalletPage"
+                asp-action="Transfer"
+                asp-route-id="@Model.UsersId"
+                class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-semibold text-gray-700">
+                    Transfer
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="rounded-xl border border-gray-200 bg-white p-6 md:p-8">
+        <div class="flex flex-col justify-between gap-6 md:flex-row md:items-start">
+            <div>
+                <p class="text-sm text-gray-500">Wallet Number</p>
+                <h2 class="mt-2 text-2xl font-bold text-gray-900">
+                    @Model.WalletNumber
+                </h2>
+            </div>
+
+            <div class="md:text-right">
+                <p class="text-sm text-gray-500">Current Balance</p>
+                <h2 class="mt-2 text-3xl font-bold text-green-600">
+                    Rp @Model.Balance.ToString("N0")
+                </h2>
+            </div>
+        </div>
+
+        <div class="my-6 border-t border-gray-200"></div>
+
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div>
+                <p class="text-sm text-gray-500">Wallet ID</p>
+                <p class="mt-1 font-semibold text-gray-900">
+                    #@Model.Id
+                </p>
+            </div>
+
+            <div>
+                <p class="text-sm text-gray-500">User ID</p>
+                <p class="mt-1 font-semibold text-gray-900">
+                    #@Model.UsersId
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</div>

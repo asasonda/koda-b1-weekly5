@@ -7,8 +7,11 @@ public sealed record TransferRequest(
     int SenderWalletId,
 
     [Required]
-    string ReceiverWalletNumber,
+    int ReceiverWalletId,
 
-    [Range(typeof(decimal), "0.01", "9999999999999999.99")]
-    decimal Amount
+    [Range(typeof(decimal), "0.01", "9999999999999999.99"), Required]
+    decimal Amount,
+
+    [StringLength(200)]
+    string? Description
 );

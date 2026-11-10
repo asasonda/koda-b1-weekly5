@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewData["Title"] - E-Wallet</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@@tailwindcss/browser@@4"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+          rel="stylesheet">
+</head>
+
+<body class="min-h-screen bg-gray-50 text-gray-800"
+      style="font-family: 'Plus Jakarta Sans', sans-serif;">
+
+    <div class="h-16 border-b border-gray-200 bg-white">
+        <div class="max-w-6xl mx-auto py-3">
+            <div>
+                <div class="flex items-center gap-3 px-4 md:px-10 lg:px-10 xl:px-0">
+                    <h2 class="font-bold text-2xl">.Ewallet.Mvc</h2>
+                    <p class="text-gray-300">|</p>
+                    <div class="md:flex hidden gap-1 bg-gray-100 items-center justify-center px-4 py-1 rounded-xl">
+                        <a asp-controller="Home" asp-action="Index" class="text-sm hover:bg-green-600 hover:text-white px-2 py-1 rounded-md " >Home</a>
+                        <p class="text-gray-300">|</p>
+                        <a href="/scalar" target="_blank" class="text-sm hover:bg-green-600 hover:text-white px-2 py-1 rounded-md ">Json Api</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        @if (TempData["Success"] is string message)
+        {
+            <div class="mb-6 rounded-lg border border-green-200 bg-green-100 px-4 py-3 text-green-700">
+                @message
+            </div>
+        }
+        @RenderBody()
+
+    </main>
+
+    @await RenderSectionAsync("Script", required: false)
+
+</body>
+</html>

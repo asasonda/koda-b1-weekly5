@@ -57,23 +57,91 @@ public sealed class SqlWalletRepository : IWalletRepository
         return ReadWallets(reader);
     }
 
-    public async Task<bool> UpdateAsync(Wallets wallets, CancellationToken cancellationToken)
+    public async Task<bool> TopUpAddAsync(int usersId, decimal amount, CancellationToken cancellationToken)
     {
         const string sql = """
-            UPDATE dbo.Wallets SET 
-                Balance = @balance
-            WHERE Id = @id
+            UPDATE dbo.Wallets SET
+                Balance = Balance + @amount
+            WHERE UsersId = @usersId
         """;
 
         await using var connection = new SqlConnection(_connection);
         await connection.OpenAsync(cancellationToken);
         await using var command = new SqlCommand(sql, connection);
 
-        AddWalletParameter(command, wallets);
+        command.Parameters.Add("@usersId", SqlDbType.Int).Value = usersId;
+        var parameter = command.Parameters.Add("@amount", SqlDbType.Decimal);
+        parameter.Precision = 18;
+        parameter.Scale = 2;
+        parameter.Value = amount;
 
         var affectedRows = await command.ExecuteNonQueryAsync(cancellationToken);
-
         return affectedRows == 1;
+    }
+
+    public async Task<bool> TransferAsync(int usersId, decimal amount, CancellationToken cancellationToken)
+    {
+        const string sql = """
+            UPDATE dbo.Wallets SET
+             Balance = Balance - @amount
+            WHERE UsersId = @usersId
+        """;
+
+        await using var connection = new SqlConnection(_connection);
+        await connection.OpenAsync(cancellationToken);
+        await using var command = new SqlCommand(sql, connection);
+
+        command.Parameters.Add("@usersId", SqlDbType.Int).Value = usersId;
+        var parameter = command.Parameters.Add("@amount", SqlDbType.Decimal);
+        parameter.Precision = 18;
+        parameter.Scale = 2;
+        parameter.Value = amount;
+
+        var affectedRows = await command.ExecuteNonQueryAsync(cancellationToken);
+        return affectedRows == 1;
+    }
+
+    public async Task<bool> ReduceBalanceAsync(int id, decimal amount, CancellationToken cancellationToken)
+    {
+        const string sql = """
+            UPDATE dbo.Wallets
+            SET Balance = Balance - @amount
+            WHERE Id = @id
+            AND Balance >= @amount
+        """;
+
+        await using var connection = new SqlConnection(_connection);
+        await connection.OpenAsync(cancellationToken);
+        await using var command = new SqlCommand(sql, connection);
+
+        command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+        var parameter = command.Parameters.Add("@amount", SqlDbType.Decimal);
+        parameter.Precision = 18;
+        parameter.Scale = 2;
+        parameter.Value = amount;
+
+        return await command.ExecuteNonQueryAsync(cancellationToken) == 1;
+    }
+
+    public async Task<bool> AddBalanceAsync(int id, decimal amount, CancellationToken cancellationToken)
+    {
+        const string sql = """
+            UPDATE dbo.Wallets
+            SET Balance = Balance + @amount
+            WHERE Id = @id
+            """;
+
+        await using var connection = new SqlConnection(_connection);
+        await connection.OpenAsync(cancellationToken);
+        await using var command = new SqlCommand(sql, connection);
+
+        command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+        var parameter = command.Parameters.Add("@amount", SqlDbType.Decimal);
+        parameter.Precision = 18;
+        parameter.Scale = 2;
+        parameter.Value = amount;
+
+        return await command.ExecuteNonQueryAsync(cancellationToken) == 1;
     }
 
     private static Wallets ReadWallets(SqlDataReader reader)
@@ -84,15 +152,5 @@ public sealed class SqlWalletRepository : IWalletRepository
             reader.GetString(2),
             reader.GetDecimal(3)
         );
-    }
-
-    private static void AddWalletParameter(SqlCommand command, Wallets wallets)
-    {
-        command.Parameters.Add("@id", SqlDbType.Int).Value = wallets.Id;
-
-        var balanceParameter = command.Parameters.Add("@balance", SqlDbType.Decimal);
-        balanceParameter.Precision = 18;
-        balanceParameter.Scale = 2;
-        balanceParameter.Value = wallets.Balance;
     }
 }

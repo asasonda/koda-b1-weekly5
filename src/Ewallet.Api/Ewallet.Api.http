@@ -10,12 +10,53 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "name" : "Budi",
-    "email" : "budi@gmail.com",
-    "phone" : "081200040987",
-    "walletNumber": "WAL001"
+    "name" : "Citra",
+    "email" : "citra@gmail.com",
+    "phone" : "081300991023",
+    "walletNumber": "WAL003"
+}
+
+### update
+PUT {{base}}/api/users/1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name" : "Budiman",
+    "email" : "budiman@gmail.com",
+    "phone" : "081200040988"
 }
 
 ### Get Wallet by userId
 GET {{base}}/api/wallets/1
+Accept: application/json
+
+
+
+### topup
+POST {{base}}/api/wallets/6/topups
+Accept: application/json
+Content-Type: application/json
+
+{
+    "amount" : 45000
+}
+
+
+
+### Transfer
+POST {{base}}/api/transfers
+Content-Type: application/json
+
+{
+    "senderWalletId": 1,
+    "receiverWalletId": 6,
+    "amount": 5000,
+    "description": "Transfer ke teman"
+}
+
+
+
+### history
+GET {{base}}/api/users/6/transactions
 Accept: application/json

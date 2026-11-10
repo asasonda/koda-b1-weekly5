@@ -9,4 +9,6 @@ public interface IUserServices
     Task<UserResponse?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task<UserResponse?> CreateAsync(UserRequest request, CancellationToken cancellationToken);
     Task<UserResponse?> UpdateAsync(int id, UpdateUserRequest request, CancellationToken cancellationToken);
+
+    Task<IReadOnlyList<TransactionResponse>> GetTransactionsByUsersIdAsync(int usersId, CancellationToken cancellationToken);
 }

@@ -34,3 +34,7 @@ CREATE Table Transactions(
     CONSTRAINT FK_Transactions_Sender Foreign Key (SenderWalletId) REFERENCES Wallets(Id),
     CONSTRAINT FK_Transactions_Receiver Foreign Key (ReceiverWalletId) REFERENCES Wallets(Id)
 )
+
+select * from Users
+select * from Wallets
+select * from Transactions

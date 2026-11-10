@@ -1,9 +1,9 @@
-using Ewallet.Api.Models;
+// using Ewallet.Api.Models;
 
-namespace Ewallet.Api.DTOs;
+// namespace Ewallet.Api.DTOs;
 
-public sealed record UserDetailResponse(int Id, string Name, string Email, string Phone, WalletResponse Wallet
-)
-{
-    public static UserDetailResponse FromModel(Users users, Wallets wallets) =>new(users.Id, users.Name, users.Email, users.Phone, WalletResponse.FromModel(wallets));
-}
+// public sealed record UserDetailResponse(int Id, string Name, string Email, string Phone, WalletResponse Wallet
+// )
+// {
+//     public static UserDetailResponse FromModel(Users users, Wallets wallets) =>new(users.Id, users.Name, users.Email, users.Phone, WalletResponse.FromModel(wallets));
+// }

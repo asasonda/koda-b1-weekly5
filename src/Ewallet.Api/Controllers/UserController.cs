@@ -39,6 +39,7 @@ public sealed class UserController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<UserResponse>> Create([FromBody] UserRequest request, CancellationToken cancellationToken)
     {
@@ -69,5 +70,33 @@ public sealed class UserController : ControllerBase
                 detail: e.Message
             );
         }
+    }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(UserResponse),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<UserResponse>> Update([FromRoute] int id, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var updated = await _service.UpdateAsync(id, request, cancellationToken);
+            return updated is null ? Problem(statusCode: StatusCodes.Status404NotFound, title: "Product not found", detail: $"No product was found for code {id}.") : Ok(updated);
+        }
+        catch (ArgumentException e)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status400BadRequest,
+                title: "Invalid product data!",
+                detail: e.Message);
+        }
+    }
+
+    [HttpGet("{id}/transactions")]
+    [ProducesResponseType(typeof(IReadOnlyList<TransactionResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetTransactions([FromRoute] int id, CancellationToken cancellationToken)
+    {
+        var result = await _service.GetTransactionsByUsersIdAsync(id, cancellationToken);
+        return Ok(result);
     }
 }

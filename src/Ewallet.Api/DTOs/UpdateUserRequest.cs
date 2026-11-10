@@ -9,9 +9,6 @@ public record UpdateUserRequest(
     [Required, StringLength(100)]
     string Email,
 
-    [Required, StringLength(255)]
-    string Password,
-
     [Required, StringLength(20)]
     string Phone
 );

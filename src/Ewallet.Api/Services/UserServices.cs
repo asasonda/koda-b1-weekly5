@@ -7,10 +7,12 @@ namespace Ewallet.Api.Services;
 public sealed class UserServices : IUserServices
 {
     private readonly IUserRepository _repository;
+    private readonly ITransactionRepository _transactionRepository;
 
-    public UserServices(IUserRepository repository)
+    public UserServices(IUserRepository repository, ITransactionRepository transactionRepository)
     {
         _repository = repository;
+        _transactionRepository = transactionRepository;
     }
 
     public async Task<UserResponse?> CreateAsync(UserRequest request, CancellationToken cancellationToken)
@@ -43,5 +45,12 @@ public sealed class UserServices : IUserServices
         var users = new Users(id, request.Name, request.Email, request.Phone);
         var updated = await _repository.UpdateUserAsync(users, cancellationToken);
         return updated ? UserResponse.FromModel(users) : null;
+    }
+
+    public async Task<IReadOnlyList<TransactionResponse>> GetTransactionsByUsersIdAsync(int usersId, CancellationToken cancellationToken)
+    {
+        var transactions = await _transactionRepository.GetByUsersIdAsync(usersId, cancellationToken);
+
+        return transactions.Select(TransactionResponse.FromModel).ToList();
     }
 }

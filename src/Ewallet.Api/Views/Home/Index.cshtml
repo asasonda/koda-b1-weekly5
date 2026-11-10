@@ -1,0 +1,74 @@
+
+@model IReadOnlyList<UserResponse>
+
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="border-red mx-auto max-w-7xl border-x h-screen border-gray-300 px-4 py-5 md:px-16 md:py-10">
+    <div class="mt-5">
+        <div class="mb-6 flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">
+                    Daftar Pengguna
+                </h2>
+                <p class="mt-1 text-sm text-gray-500">
+                    Total @Model.Count pengguna terdaftar.
+                </p>
+            </div>
+
+            <a asp-controller="Home"
+            asp-action="Create"
+            class="rounded-lg bg-black px-5 py-2.5 text-sm font-semibold text-white">
+                + Tambah User
+            </a>
+        </div>
+
+        @if (Model.Count == 0)
+        {
+            <div class="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-10 text-center">
+                <h3 class="font-semibold text-gray-700">
+                    Belum ada pengguna
+                </h3>
+                <p class="mt-2 text-sm text-gray-500">
+                    Tambahkan pengguna terlebih dahulu.
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach (var user in Model)
+                {
+                    <div class="rounded-lg border border-gray-200 bg-white p-5 transition">
+                        <div class="flex items-center gap-4">
+                            <div class="min-w-0">
+                                <h3 class="truncate text-lg font-bold text-gray-900">
+                                    @user.Name
+                                </h3>
+
+                                <p class="truncate text-sm text-gray-500">
+                                    @user.Email
+                                </p>
+                            </div>
+                        </div>
+                        <div class="my-2 border-t border-gray-100"></div>
+
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between gap-2">
+                                <span class="text-gray-500">Phone</span>
+                                <span class="font-semibold text-gray-700">@user.Phone</span>
+                            </div>
+                        </div>
+
+                        <a asp-controller="Home" asp-action="Detail" asp-route-id="@user.Id"
+                           class="mt-5 block rounded-lg bg-black px-4 py-2.5 text-center text-sm font-semibold text-white transition">
+                            Pilih Account
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+</div>
