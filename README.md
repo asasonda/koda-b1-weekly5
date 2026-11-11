@@ -306,16 +306,6 @@ Pengujian dilakukan untuk memastikan setiap fitur berjalan sesuai dengan kebutuh
 | 9 | Validation | Mengirim nominal tidak valid | Request ditolak dengan pesan error |
 | 10 | Validation | Transfer melebihi saldo | Transaksi ditolak |
 
-### Status Pengujian
-
-Isi hasil pengujian berdasarkan hasil aktual ketika menjalankan aplikasi.
-
-| Status | Keterangan |
-|---|---|
-| PASS | Fitur berjalan sesuai harapan |
-| FAIL | Fitur belum berjalan sesuai harapan |
-| NOT TESTED | Fitur belum diuji |
-
 ## 9. Arsitektur dan Design Pattern
 
 Project ini menerapkan beberapa konsep dalam pengembangan aplikasi:
